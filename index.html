@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+    <title>🍛カレー屋さん経営ゲーム🍛</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>🍛カレー屋さん経営ゲーム🍛</h1>
+<p class="intro">「アナログとデジタルを融合して、ワクワクしながら経済を学ぼう！」</p>
+
+<div id="mode-selection">
+  <h2>プレイモード選択</h2>
+  <label><input type="radio" name="playMode" value="analog" checked> アナログ併用モード</label><br>
+  <label><input type="radio" name="playMode" value="digital"> デジタル完結モード</label>
+</div>
+
+<div id="app">
+  <div id="parent-board">
+    <h2 class="section-title">📜全体状況</h2>
+    <p><strong>ターン:</strong> <span id="turnCount">1</span>/<span id="maxTurn">5</span></p>
+    
+    <div id="modesArea">
+      <h3>モードON/OFF</h3>
+      <label><input type="checkbox" id="modeWeather" checked> 天気</label>
+      <label><input type="checkbox" id="modeEvent" checked> 経済イベント</label>
+      <label><input type="checkbox" id="modeForex"> 為替</label>
+      <label><input type="checkbox" id="modeInflation"> インフレ</label>
+      <label><input type="checkbox" id="modeTax"> 税金</label>
+      <label><input type="checkbox" id="modeStaff"> スタッフ</label>
+      <label><input type="checkbox" id="modeAd"> 広告</label>
+      <label><input type="checkbox" id="modeInsurance"> 保険</label>
+    </div>
+
+    <div id="globalInfo">
+      <h3>共通数値</h3>
+      <p>為替レート: <span id="fxRate">100円/ドル</span></p>
+      <p>インフレ率: <span id="inflationRate">0%</span></p>
+      <p>税率: <span id="taxRate">20%</span></p>
+      <p>金利: <span id="interestRate">1000円固定</span></p>
+    </div>
+
+    <div id="currentWeatherEvent">
+      <h3>天気:</h3>
+      <span id="weatherDisplay">☀</span>
+      <h3>イベント:</h3>
+      <span id="eventDisplay">なし</span>
+    </div>
+    
+    <!-- アナログモード用: 天気/イベントを手動選択UI -->
+    <div id="analogInputs" style="display:none;">
+      <h3>アナログモード設定</h3>
+      <p>アナログで決めた天気を選んでください:</p>
+      <select id="analogWeatherSelect">
+        <option value="☀">☀晴れ</option>
+        <option value="☔">☔雨</option>
+        <option value="🌪">🌪台風</option>
+      </select>
+      <p>アナログで引いたイベントカードを選択:</p>
+      <select id="analogEventSelect">
+        <option value="なし">なし</option>
+        <option value="好景気">好景気</option>
+        <option value="不景気">不景気</option>
+        <option value="インバウンド増">インバウンド増</option>
+        <option value="ハッカー攻撃">ハッカー攻撃</option>
+        <option value="牛肉病気">牛肉病気</option>
+      </select>
+    </div>
+    
+    <!-- デジタルモード用: ランダム決定ボタン -->
+    <div id="digitalButtons" style="display:none;">
+      <h3>デジタルモード：ランダム決定</h3>
+      <button id="decideWeatherBtn">天気決定🎲</button>
+      <button id="decideEventBtn">イベント決定🎲</button>
+      <div id="countdownArea" style="font-size:1.2em; color:blue; margin:5px 0;"></div>
+    </div>
+  </div>
+
+  <div id="child-board">
+    <h2 class="section-title">🏠あなたのお店</h2>
+    <p><strong>残金:</strong> <span id="money">100000</span>円</p>
+    <p><strong>必須素材:</strong> お米🍚・ルー🇯🇵(固定)</p>
+    
+    <h3>支払い方法</h3>
+    <label><input type="radio" name="paymode" value="cash" checked>現金</label>
+    <label><input type="radio" name="paymode" value="cashless">キャッシュレス</label>
+
+    <h3>価格設定</h3>
+    <select id="priceSelect">
+      <option value="300">300円 →130皿</option>
+      <option value="400">400円 →120皿</option>
+      <option value="500" selected>500円 →100皿</option>
+      <option value="600">600円 →90皿</option>
+      <option value="700">700円 →80皿</option>
+    </select>
+
+    <h3>材料選択</h3>
+    <div class="materials-grid">
+      <label><input type="checkbox" data-tags="米" checked disabled>お米(MUST)</label>
+      <label><input type="checkbox" data-tags="" checked disabled>カレールー(MUST)</label>
+      <label><input type="checkbox" data-tags="外国産">牛肉(外国産)🌏</label>
+      <label><input type="checkbox" data-tags="">牛肉(国産)</label>
+      <label><input type="checkbox" data-tags="鶏肉">鶏肉🐔</label>
+      <label><input type="checkbox" data-tags="野菜">なす(野菜)</label>
+      <label><input type="checkbox" data-tags="野菜">トマト(野菜)</label>
+      <label><input type="checkbox" data-tags="野菜">たまねぎ(野菜)</label>
+      <label><input type="checkbox" data-tags="はちみつ">はちみつ🍯</label>
+      <label><input type="checkbox" data-tags="外国産">外国産スパイス🌏</label>
+    </div>
+
+    <h3>スタッフ</h3>
+    <select id="staffSelect">
+      <option value="none">なし</option>
+      <option value="aya" data-salary="2000">アヤさん(晴れ+5皿)</option>
+      <option value="satoru" data-salary="3000">サトルさん(広告+5皿)</option>
+    </select>
+
+    <h3>広告</h3>
+    <select id="adSelect">
+      <option value="none">なし</option>
+      <option value="flyer" data-cost="2000">チラシ(+10皿)</option>
+      <option value="posting" data-cost="3000">ポスティング(+15皿)</option>
+      <option value="snsAd" data-cost="0">SNS広告(1000円毎+5皿)</option>
+      <option value="station" data-cost="5000">駅前配布(+25皿,雨半減)</option>
+    </select>
+    <div id="snsAdArea" style="display:none;">
+      SNS広告費(1000円単位): <input type="number" id="snsAdCost" value="0" min="0" step="1000">円
+    </div>
+
+    <h3>保険</h3>
+    <select id="insuranceSelect">
+      <option value="none">なし</option>
+      <option value="typhoon" data-cost="1000">台風保険</option>
+      <option value="sns" data-cost="1000">SNS炎上保険</option>
+      <option value="import" data-cost="1000">輸入規制保険</option>
+    </select>
+
+    <div class="buttons">
+      <button id="nextTurnBtn">次のターンへ進む</button>
+    </div>
+
+    <h3>結果</h3>
+    <p>今ターン販売皿数: <span id="turnSales">0</span>皿</p>
+    <p>今ターン売上: <span id="turnRevenue">0</span>円</p>
+    <p>費用合計: <span id="turnCost">0</span>円</p>
+    <p>残金: <span id="turnMoney">100000</span>円</p>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
