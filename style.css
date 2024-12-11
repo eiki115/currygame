@@ -1,18 +1,17 @@
 body {
-    font-family: "Hiragino Kaku Gothic ProN", sans-serif;
-    margin: 20px;
-    background: #f9f7f1;
+    font-family:sans-serif; 
+    margin:20px;
+    background:#f9f7f1;
     color:#333;
 }
 
 h1 {
-    text-align: center;
-    font-size: 1.8em;
-    margin-bottom: 20px;
-}
-
-.intro {
     text-align:center; 
+    font-size:1.5em; 
+    margin-bottom:20px;
+}
+.intro {
+    text-align:center;
     margin-bottom:20px;
 }
 
@@ -25,30 +24,34 @@ h1 {
     margin:0 auto 20px auto;
 }
 
-#app {
-    display:flex; 
-    gap:20px; 
-    flex-wrap:wrap;
-    max-width:1200px;
-    margin:0 auto;
+.hidden {
+    display:none !important;
 }
 
-#parent-board,#child-board {
+#app {
+    max-width:600px; 
+    margin:0 auto;
     background:#fffdf5;
+    border:2px solid #f3e9d2;
     padding:20px;
     border-radius:12px;
-    border:2px solid #f3e9d2;
-    flex:1; 
-    min-width:300px;
-    position:relative;
 }
 
-.buttons {
-    margin:10px 0;
+button {
+    background:#e2f0c2; 
+    border:none; 
+    border-radius:8px;
+    padding:10px 15px; 
+    cursor:pointer; 
+    font-size:1em; 
+    margin-top:10px;
+}
+button:hover {
+    background:#d2e8a8;
 }
 
 .eye-btn {
-    background: none; border: none; cursor:pointer; padding:0; margin-left:5px;
+    background:none; border:none; cursor:pointer; padding:0; margin-left:5px;
     font-size:1em; color:#333;
 }
 .eye-btn:hover {
@@ -59,21 +62,10 @@ h1 {
     font-size:1em;
 }
 
-.hidden {
-    display:none !important;
-}
-
-.info-btn {
-    background:#e2f0c2; border:none; border-radius:5px; padding:2px 5px; cursor:pointer; font-size:0.8em;
-}
-.info-btn:hover {
-    background:#d2e8a8;
-}
-
 #materials-area {
     max-height:200px; 
     overflow:auto; 
-    border:1px solid #ccc;
+    border:1px solid #ccc; 
     padding:5px;
     border-radius:8px;
     background:#f9f9f9;
@@ -81,7 +73,7 @@ h1 {
 }
 .material-item {
     display:flex; 
-    align-items:center; 
+    align-items:center;
     justify-content:space-between;
     margin-bottom:5px;
 }
@@ -98,34 +90,17 @@ h1 {
     margin-left:5px;
 }
 .tag-btn:hover {
-    background:#d2e8a8;
-    color:#333;
-}
-
-#ingredient-total {
-    font-weight:bold;
-}
-
-#costDetails p {
-    margin:2px 0;
-    font-size:0.9em;
-}
-.cost-changed {
-    color:blue; font-weight:bold;
-}
-.cost-up {
-    color:red; font-weight:bold;
+    background:#d2e8a8; color:#333;
 }
 
 #salesDetailArea {
-    background:#fafafa; 
+    background:#fafafa;
     border:1px solid #ccc;
     padding:10px;
     border-radius:8px;
     font-size:0.9em;
     display:none;
 }
-
 #salesDetailArea.show {
     display:block;
 }
@@ -133,21 +108,23 @@ h1 {
 #tagModal, #infoModal {
     position:fixed; 
     top:0;left:0;
-    width:100%; height:100%;
+    width:100%;height:100%;
     background:rgba(0,0,0,0.5);
     z-index:9999;
-    display:flex; justify-content:center; align-items:center;
+    display:flex;justify-content:center;align-items:center;
 }
-#tagModalContent, #infoModalContent {
+
+#tagModalContent,#infoModalContent {
     background:#fff;
     padding:20px;
     border-radius:8px;
     max-width:300px;
     position:relative;
 }
-#tagModalClose, #infoModalClose {
-    position:absolute; 
-    top:5px;right:10px; 
+
+#tagModalClose,#infoModalClose {
+    position:absolute;
+    top:5px;right:10px;
     cursor:pointer;
     font-weight:bold;
     font-size:1.2em;

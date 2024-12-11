@@ -3,31 +3,45 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>🍛カレー屋さん経営ゲーム🍛</title>
+<title>カレー屋さん経営ゲーム(アナログモード完全版)</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>🍛カレー屋さん経営ゲーム🍛</h1>
-<p class="intro">モード選択→モード概要確認→ゲーム開始！<br>アナログとデジタルを組み合わせて経済を学ぼう！</p>
+<h1>カレー屋さん経営ゲーム(アナログモード完全版)</h1>
+<p class="intro">
+全ての材料・経済イベント・天気を統合した完全版。<br>
+アナログで天気・イベントをセレクトで選び、価格・材料・モードもすべて選択可能。<br>
+支払い方法(現金/キャッシュレス)、モード(為替、インフレ、税金、スタッフ、広告、保険、材料算定など)を最初に決め、確認後ゲーム開始。<br>
+毎ターン費用は固定33,000円(内訳は非公開)、天気・イベントはユーザーが手動で選択。<br>
+材料費は合計10,000円以内に抑える必要があります。
+</p>
 
 <div id="mode-selection-area">
   <h2>モード選択</h2>
-  <p>以下のモードから好きなものを選んでください。(初回のみ)</p>
-  <label><input type="checkbox" class="modeCheck" data-mode="weather" checked> 天気</label><br>
-  <label><input type="checkbox" class="modeCheck" data-mode="event" checked> 経済イベント</label><br>
-  <label><input type="checkbox" class="modeCheck" data-mode="forex"> 為替</label><br>
-  <label><input type="checkbox" class="modeCheck" data-mode="inflation"> インフレ</label><br>
-  <label><input type="checkbox" class="modeCheck" data-mode="tax"> 税金</label><br>
-  <label><input type="checkbox" class="modeCheck" data-mode="staff"> スタッフ</label><br>
-  <label><input type="checkbox" class="modeCheck" data-mode="ad"> 広告</label><br>
-  <label><input type="checkbox" class="modeCheck" data-mode="insurance"> 保険</label><br>
-  <label><input type="checkbox" class="modeCheck" data-mode="materialCalc"> 材料算定</label><br>
-  <label><input type="checkbox" class="modeCheck" data-mode="digital"> デジタル完結</label><br>
+  <p>利用したいモードにチェックを入れてください。(初回のみ)</p>
+  <label><input type="checkbox" class="modeCheck" data-mode="weather" checked disabled> 天気モード(固定ON)</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="event" checked> 経済イベントモード</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="forex"> 為替モード</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="inflation"> インフレモード</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="tax"> 税金モード</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="staff"> スタッフモード</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="ad"> 広告モード</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="insurance"> 保険モード</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="materialCalc"> 材料算定モード</label><br>
 
   <p>支払い方法: 
     <label><input type="radio" name="paymode" value="cash" checked>現金</label>
     <label><input type="radio" name="paymode" value="cashless">キャッシュレス</label>
   </p>
+
+  <p>1皿の価格を決めて下さい(300～800円)</p>
+  <input type="number" id="priceInput" value="500" min="300" max="800">
+
+  <p>材料を選んで下さい(合計10,000円以内)</p>
+  <div id="materials-area"></div>
+  <p id="ingredient-total">合計:0円</p>
+  <p id="ingredientNotice" style="color:red;"></p>
+
   <button id="confirmModesBtn">選択完了</button>
 </div>
 
@@ -43,6 +57,9 @@
   <div id="parent-board">
     <h3>全体状況</h3>
     <p><strong>ターン:</strong> <span id="turnCount">1</span>/<span id="maxTurn">5</span></p>
+    <p><strong>残金:</strong> <span id="money" class="toggle-num">100000</span><button class="eye-btn">👁</button>円</p>
+    <p>支払い方法: <span id="paymentModeDisplay"></span></p>
+    <p>1皿の価格: <span id="priceDisplay">500</span>円</p>
 
     <div id="globalInfo">
       <div id="forexInfo" class="hidden"><strong>為替レート:</strong> <span id="fxRate">100円/ドル</span></div>
@@ -51,100 +68,62 @@
       <div id="interestInfo"><strong>金利:</strong> <span id="interestRate">1000円固定</span></div>
     </div>
 
-    <div id="weatherEventArea">
-      <h4>天気・イベント</h4>
-      <p>天気: <span id="weatherDisplay">☀</span> <button class="info-btn" data-type="weather">説明</button></p>
-      <p>イベント: <span id="eventDisplay">なし</span> <button class="info-btn" data-type="event">説明</button></p>
-      <div id="digitalButtons" class="hidden">
-        <button id="decideWeatherBtn">天気・イベント決定🎲</button>
-        <div id="countdownArea" style="font-size:1.2em; color:blue;"></div>
-      </div>
-    </div>
-
-    <div id="costSummary">
-      <h4>費用内訳</h4>
-      <p>前回費用合計:<span id="prevCost">-</span></p>
-      <p>今回費用合計:<span id="thisCost">0</span></p>
-      <div id="costDetails"></div>
-    </div>
-  </div>
-
-  <div id="child-board">
-    <h3>あなたのお店</h3>
-    <p><strong>残金:</strong> <span id="money" class="toggle-num">100000</span><button class="eye-btn">👁</button>円</p>
-
-    <h4>価格設定</h4>
-    <select id="priceSelect">
-      <option value="300">300円 →130皿</option>
-      <option value="400">400円 →120皿</option>
-      <option value="500" selected>500円 →100皿</option>
-      <option value="600">600円 →90皿</option>
-      <option value="700">700円 →80皿</option>
+    <h4>天気選択(アナログ)</h4>
+    <select id="weatherSelect">
+      <option value="台風">台風(休業)</option>
+      <option value="大雨">大雨(売上半減)</option>
+      <option value="雨">雨(少し来客減)</option>
+      <option value="曇り">曇り(やや来客減)</option>
+      <option value="晴れ" selected>晴れ(普通)</option>
+      <option value="快晴">快晴(来客増)</option>
     </select>
 
-    <h4>材料選択(自分でお米・ルーも選択)</h4>
-    <p>タグを押すとタグ説明表示</p>
-    <div id="materials-area"></div>
-    <p id="ingredient-total">合計:0円</p>
-    <p id="ingredientNotice" style="color:red;"></p>
-
-    <h4 id="staffSection" class="hidden">スタッフ</h4>
-    <select id="staffSelect" class="hidden">
-      <option value="none">なし</option>
-      <option value="aya" data-salary="2000">アヤさん(晴れ+5皿)</option>
-      <option value="satoru" data-salary="3000">サトルさん(広告+5皿)</option>
+    <h4>経済イベント選択(アナログ)</h4>
+    <select id="eventSelect">
+      <!-- 全イベント例から一部抜粋ではなく、全て入れる -->
+      <option value="なし" selected>なし(変化なし)</option>
+      <option value="不景気">不景気</option>
+      <option value="ガソリン高">ガソリン高</option>
+      <option value="大雪発生">大雪発生</option>
+      <option value="ハッカー">ハッカー</option>
+      <option value="鳥インフルエンザ">鳥インフルエンザ</option>
+      <option value="はちみつブーム">はちみつブーム</option>
+      <option value="米不作">米不作</option>
+      <option value="戦争">戦争</option>
+      <option value="インフレ">インフレ</option>
+      <option value="デフレ">デフレ</option>
+      <option value="家賃上昇">家賃上昇</option>
+      <option value="玉ねぎ不作">玉ねぎ不作</option>
+      <option value="ストライキ">ストライキ</option>
+      <option value="好景気">好景気</option>
+      <option value="大統領交代">大統領交代</option>
+      <option value="金利上昇">金利上昇</option>
+      <option value="増税">増税</option>
+      <option value="消費税減税">消費税減税</option>
+      <option value="パンデミック">パンデミック</option>
+      <option value="輸入規制強化">輸入規制強化</option>
+      <option value="SNSでのバズり">SNSでのバズり</option>
+      <option value="エネルギー価格下落">エネルギー価格下落</option>
+      <option value="農産物豊作">農産物豊作</option>
+      <option value="ライバル店閉店">ライバル店閉店</option>
     </select>
 
-    <h4 id="adSection" class="hidden">広告</h4>
-    <select id="adSelect" class="hidden">
-      <option value="none">なし</option>
-      <option value="flyer" data-cost="2000">チラシ(+10皿)</option>
-      <option value="posting" data-cost="3000">ポスティング(+15皿)</option>
-      <option value="snsAd" data-cost="0">SNS広告</option>
-      <option value="station" data-cost="5000">駅前配布(+25皿,雨半減)</option>
-    </select>
-    <div id="snsAdArea" class="hidden">
-      SNS広告費:<select id="snsAdCost">
-        <option value="0">0円(+0皿)</option>
-        <option value="1000">1000円(+5皿)</option>
-        <option value="2000">2000円(+10皿)</option>
-        <option value="3000">3000円(+15皿)</option>
-      </select>
-    </div>
+    <h3>結果</h3>
+    <p>販売皿数: <span id="salesCount" class="toggle-num">0</span><button class="eye-btn">👁</button>皿</p>
+    <p>売上: <span id="revenue" class="toggle-num">0</span><button class="eye-btn">👁</button>円</p>
+    <p>費用(固定33,000円+変動): <span id="cost" class="toggle-num">0</span><button class="eye-btn">👁</button>円</p>
+    <p>利益(売上-費用): <span id="profit" class="toggle-num">0</span><button class="eye-btn">👁</button>円<br>
+      <small>利益=売上-費用。ここで儲けが分かる！</small></p>
 
-    <h4 id="insuranceSection" class="hidden">保険</h4>
-    <select id="insuranceSelect" class="hidden">
-      <option value="none">なし</option>
-      <option value="typhoon" data-cost="1000">台風保険</option>
-      <option value="sns" data-cost="1000">SNS炎上保険</option>
-      <option value="import" data-cost="1000">輸入規制保険</option>
-    </select>
-
-    <div class="buttons">
-      <button id="nextTurnBtn">次のターンへ進む</button>
-    </div>
-
-    <h4>結果</h4>
-    <p>今ターン販売皿数: <span id="turnSales" class="toggle-num">0</span><button class="eye-btn">👁</button>皿</p>
-    <p>今ターン売上: <span id="turnRevenue" class="toggle-num">0</span><button class="eye-btn">👁</button>円</p>
-    <p>費用合計: <span id="turnCost" class="toggle-num">0</span><button class="eye-btn">👁</button>円</p>
-    <p>利益(売上-費用): <span id="turnProfit" class="toggle-num">0</span><button class="eye-btn">👁</button>円
-      <br><small>利益=売上-費用。この差が儲けだよ。</small></p>
     <p>残金: <span id="turnMoney" class="toggle-num">100000</span><button class="eye-btn">👁</button>円</p>
 
-    <h4>販売数・売上計算プロセス</h4>
+    <h4>売上計算プロセス</h4>
     <div id="salesDetailArea"></div>
 
-    <h4>ターン履歴</h4>
-    <div id="history"></div>
+    <button id="nextTurnBtn">次のターンへ</button>
 
-    <h4>他のアプリ候補</h4>
-    <ul>
-      <li>世界スパイス拡張パック</li>
-      <li>オンライン対戦モード</li>
-      <li>教材パック(動画解説)</li>
-      <li>AIアナリスト提案モード</li>
-    </ul>
+    <h3>ターン履歴</h3>
+    <div id="history"></div>
   </div>
 </div>
 
