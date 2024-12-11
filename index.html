@@ -1,92 +1,79 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
-    <title>🍛カレー屋さん経営ゲーム🍛</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>🍛カレー屋さん経営ゲーム🍛</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <h1>🍛カレー屋さん経営ゲーム🍛</h1>
-<p class="intro">「アナログとデジタルを融合して、ワクワクしながら経済を学ぼう！」</p>
+<p class="intro">モード選択→モード概要確認→ゲーム開始！<br>アナログとデジタルを組み合わせて経済を学ぼう！</p>
 
-<div id="mode-selection">
-  <h2>プレイモード選択</h2>
-  <label><input type="radio" name="playMode" value="analog" checked> アナログ併用モード</label><br>
-  <label><input type="radio" name="playMode" value="digital"> デジタル完結モード</label>
+<div id="mode-selection-area">
+  <h2>モード選択</h2>
+  <p>以下のモードから好きなものを選んでください。(初回のみ)</p>
+  <label><input type="checkbox" class="modeCheck" data-mode="weather" checked> 天気</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="event" checked> 経済イベント</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="forex"> 為替</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="inflation"> インフレ</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="tax"> 税金</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="staff"> スタッフ</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="ad"> 広告</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="insurance"> 保険</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="materialCalc"> 材料算定</label><br>
+  <label><input type="checkbox" class="modeCheck" data-mode="digital"> デジタル完結</label><br>
+
+  <p>支払い方法: 
+    <label><input type="radio" name="paymode" value="cash" checked>現金</label>
+    <label><input type="radio" name="paymode" value="cashless">キャッシュレス</label>
+  </p>
+  <button id="confirmModesBtn">選択完了</button>
 </div>
 
-<div id="app">
+<div id="mode-explanation-area" class="hidden">
+  <h2>選んだモードの確認</h2>
+  <div id="modeExplanationList"></div>
+  <button id="nextModeExpBtn" class="hidden">確認した</button>
+  <button id="startGameBtn" class="hidden">ゲーム開始</button>
+</div>
+
+<div id="app" class="hidden">
+  <h2 id="selectedModesTitle"></h2>
   <div id="parent-board">
-    <h2 class="section-title">📜全体状況</h2>
+    <h3>全体状況</h3>
     <p><strong>ターン:</strong> <span id="turnCount">1</span>/<span id="maxTurn">5</span></p>
-    
-    <div id="modesArea">
-      <h3>モードON/OFF</h3>
-      <label><input type="checkbox" id="modeWeather" checked> 天気</label>
-      <label><input type="checkbox" id="modeEvent" checked> 経済イベント</label>
-      <label><input type="checkbox" id="modeForex"> 為替</label>
-      <label><input type="checkbox" id="modeInflation"> インフレ</label>
-      <label><input type="checkbox" id="modeTax"> 税金</label>
-      <label><input type="checkbox" id="modeStaff"> スタッフ</label>
-      <label><input type="checkbox" id="modeAd"> 広告</label>
-      <label><input type="checkbox" id="modeInsurance"> 保険</label>
-    </div>
 
     <div id="globalInfo">
-      <h3>共通数値</h3>
-      <p>為替レート: <span id="fxRate">100円/ドル</span></p>
-      <p>インフレ率: <span id="inflationRate">0%</span></p>
-      <p>税率: <span id="taxRate">20%</span></p>
-      <p>金利: <span id="interestRate">1000円固定</span></p>
+      <div id="forexInfo" class="hidden"><strong>為替レート:</strong> <span id="fxRate">100円/ドル</span></div>
+      <div id="inflationInfo" class="hidden"><strong>インフレ率:</strong> <span id="inflationRate">0%</span></div>
+      <div id="taxInfo" class="hidden"><strong>税率:</strong> <span id="taxRate">20%</span></div>
+      <div id="interestInfo"><strong>金利:</strong> <span id="interestRate">1000円固定</span></div>
     </div>
 
-    <div id="currentWeatherEvent">
-      <h3>天気:</h3>
-      <span id="weatherDisplay">☀</span>
-      <h3>イベント:</h3>
-      <span id="eventDisplay">なし</span>
+    <div id="weatherEventArea">
+      <h4>天気・イベント</h4>
+      <p>天気: <span id="weatherDisplay">☀</span> <button class="info-btn" data-type="weather">説明</button></p>
+      <p>イベント: <span id="eventDisplay">なし</span> <button class="info-btn" data-type="event">説明</button></p>
+      <div id="digitalButtons" class="hidden">
+        <button id="decideWeatherBtn">天気・イベント決定🎲</button>
+        <div id="countdownArea" style="font-size:1.2em; color:blue;"></div>
+      </div>
     </div>
-    
-    <!-- アナログモード用: 天気/イベントを手動選択UI -->
-    <div id="analogInputs" style="display:none;">
-      <h3>アナログモード設定</h3>
-      <p>アナログで決めた天気を選んでください:</p>
-      <select id="analogWeatherSelect">
-        <option value="☀">☀晴れ</option>
-        <option value="☔">☔雨</option>
-        <option value="🌪">🌪台風</option>
-      </select>
-      <p>アナログで引いたイベントカードを選択:</p>
-      <select id="analogEventSelect">
-        <option value="なし">なし</option>
-        <option value="好景気">好景気</option>
-        <option value="不景気">不景気</option>
-        <option value="インバウンド増">インバウンド増</option>
-        <option value="ハッカー攻撃">ハッカー攻撃</option>
-        <option value="牛肉病気">牛肉病気</option>
-      </select>
-    </div>
-    
-    <!-- デジタルモード用: ランダム決定ボタン -->
-    <div id="digitalButtons" style="display:none;">
-      <h3>デジタルモード：ランダム決定</h3>
-      <button id="decideWeatherBtn">天気決定🎲</button>
-      <button id="decideEventBtn">イベント決定🎲</button>
-      <div id="countdownArea" style="font-size:1.2em; color:blue; margin:5px 0;"></div>
+
+    <div id="costSummary">
+      <h4>費用内訳</h4>
+      <p>前回費用合計:<span id="prevCost">-</span></p>
+      <p>今回費用合計:<span id="thisCost">0</span></p>
+      <div id="costDetails"></div>
     </div>
   </div>
 
   <div id="child-board">
-    <h2 class="section-title">🏠あなたのお店</h2>
-    <p><strong>残金:</strong> <span id="money">100000</span>円</p>
-    <p><strong>必須素材:</strong> お米🍚・ルー🇯🇵(固定)</p>
-    
-    <h3>支払い方法</h3>
-    <label><input type="radio" name="paymode" value="cash" checked>現金</label>
-    <label><input type="radio" name="paymode" value="cashless">キャッシュレス</label>
+    <h3>あなたのお店</h3>
+    <p><strong>残金:</strong> <span id="money" class="toggle-num">100000</span><button class="eye-btn">👁</button>円</p>
 
-    <h3>価格設定</h3>
+    <h4>価格設定</h4>
     <select id="priceSelect">
       <option value="300">300円 →130皿</option>
       <option value="400">400円 →120皿</option>
@@ -95,41 +82,38 @@
       <option value="700">700円 →80皿</option>
     </select>
 
-    <h3>材料選択</h3>
-    <div class="materials-grid">
-      <label><input type="checkbox" data-tags="米" checked disabled>お米(MUST)</label>
-      <label><input type="checkbox" data-tags="" checked disabled>カレールー(MUST)</label>
-      <label><input type="checkbox" data-tags="外国産">牛肉(外国産)🌏</label>
-      <label><input type="checkbox" data-tags="">牛肉(国産)</label>
-      <label><input type="checkbox" data-tags="鶏肉">鶏肉🐔</label>
-      <label><input type="checkbox" data-tags="野菜">なす(野菜)</label>
-      <label><input type="checkbox" data-tags="野菜">トマト(野菜)</label>
-      <label><input type="checkbox" data-tags="野菜">たまねぎ(野菜)</label>
-      <label><input type="checkbox" data-tags="はちみつ">はちみつ🍯</label>
-      <label><input type="checkbox" data-tags="外国産">外国産スパイス🌏</label>
-    </div>
+    <h4>材料選択(自分でお米・ルーも選択)</h4>
+    <p>タグを押すとタグ説明表示</p>
+    <div id="materials-area"></div>
+    <p id="ingredient-total">合計:0円</p>
+    <p id="ingredientNotice" style="color:red;"></p>
 
-    <h3>スタッフ</h3>
-    <select id="staffSelect">
+    <h4 id="staffSection" class="hidden">スタッフ</h4>
+    <select id="staffSelect" class="hidden">
       <option value="none">なし</option>
       <option value="aya" data-salary="2000">アヤさん(晴れ+5皿)</option>
       <option value="satoru" data-salary="3000">サトルさん(広告+5皿)</option>
     </select>
 
-    <h3>広告</h3>
-    <select id="adSelect">
+    <h4 id="adSection" class="hidden">広告</h4>
+    <select id="adSelect" class="hidden">
       <option value="none">なし</option>
       <option value="flyer" data-cost="2000">チラシ(+10皿)</option>
       <option value="posting" data-cost="3000">ポスティング(+15皿)</option>
-      <option value="snsAd" data-cost="0">SNS広告(1000円毎+5皿)</option>
+      <option value="snsAd" data-cost="0">SNS広告</option>
       <option value="station" data-cost="5000">駅前配布(+25皿,雨半減)</option>
     </select>
-    <div id="snsAdArea" style="display:none;">
-      SNS広告費(1000円単位): <input type="number" id="snsAdCost" value="0" min="0" step="1000">円
+    <div id="snsAdArea" class="hidden">
+      SNS広告費:<select id="snsAdCost">
+        <option value="0">0円(+0皿)</option>
+        <option value="1000">1000円(+5皿)</option>
+        <option value="2000">2000円(+10皿)</option>
+        <option value="3000">3000円(+15皿)</option>
+      </select>
     </div>
 
-    <h3>保険</h3>
-    <select id="insuranceSelect">
+    <h4 id="insuranceSection" class="hidden">保険</h4>
+    <select id="insuranceSelect" class="hidden">
       <option value="none">なし</option>
       <option value="typhoon" data-cost="1000">台風保険</option>
       <option value="sns" data-cost="1000">SNS炎上保険</option>
@@ -140,11 +124,43 @@
       <button id="nextTurnBtn">次のターンへ進む</button>
     </div>
 
-    <h3>結果</h3>
-    <p>今ターン販売皿数: <span id="turnSales">0</span>皿</p>
-    <p>今ターン売上: <span id="turnRevenue">0</span>円</p>
-    <p>費用合計: <span id="turnCost">0</span>円</p>
-    <p>残金: <span id="turnMoney">100000</span>円</p>
+    <h4>結果</h4>
+    <p>今ターン販売皿数: <span id="turnSales" class="toggle-num">0</span><button class="eye-btn">👁</button>皿</p>
+    <p>今ターン売上: <span id="turnRevenue" class="toggle-num">0</span><button class="eye-btn">👁</button>円</p>
+    <p>費用合計: <span id="turnCost" class="toggle-num">0</span><button class="eye-btn">👁</button>円</p>
+    <p>利益(売上-費用): <span id="turnProfit" class="toggle-num">0</span><button class="eye-btn">👁</button>円
+      <br><small>利益=売上-費用。この差が儲けだよ。</small></p>
+    <p>残金: <span id="turnMoney" class="toggle-num">100000</span><button class="eye-btn">👁</button>円</p>
+
+    <h4>販売数・売上計算プロセス</h4>
+    <div id="salesDetailArea"></div>
+
+    <h4>ターン履歴</h4>
+    <div id="history"></div>
+
+    <h4>他のアプリ候補</h4>
+    <ul>
+      <li>世界スパイス拡張パック</li>
+      <li>オンライン対戦モード</li>
+      <li>教材パック(動画解説)</li>
+      <li>AIアナリスト提案モード</li>
+    </ul>
+  </div>
+</div>
+
+<div id="tagModal" class="hidden">
+  <div id="tagModalContent">
+    <span id="tagModalClose">×</span>
+    <h3 id="tagTitle"></h3>
+    <p id="tagDesc"></p>
+  </div>
+</div>
+
+<div id="infoModal" class="hidden">
+  <div id="infoModalContent">
+    <span id="infoModalClose">×</span>
+    <h3 id="infoModalTitle"></h3>
+    <p id="infoModalText"></p>
   </div>
 </div>
 
